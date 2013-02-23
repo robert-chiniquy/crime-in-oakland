@@ -1,0 +1,27 @@
+{
+  "name": "d3-plugins",
+  "version": "0.0.0",
+  "description": "Plugins for D3.js.",
+  "keywords": [
+    "visualization"
+  ],
+  "homepage": "http://github.com/d3/d3-plugins",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/d3/d3-plugins.git"
+  },
+  "dependencies": {
+    "d3": "3.0.x"
+  },
+  "devDependencies": {
+    "vows": "0.6.x"
+  },
+  "scripts": {
+    "test": "./node_modules/vows/bin/vows `find . -name \"*-test.js\" \\! -path \"./node_modules/*\"`"
+  },
+  "gitHead": "f9014263d0296fe12f4df929c525afe75d67f853",
+  "readme": "# D3 Plugins\n\nThis is a repository for sharing D3 plugins.\n\nEach plugin should live in a directory that matches its name.\n\n## Running Tests\n\nThe tests use [Vows](http://vowsjs.org), which depends on [Node.js](http://nodejs.org/) and [NPM](http://npmjs.org/). If you are developing on Mac OS X, an easy way to install Node and NPM is using [Homebrew](http://mxcl.github.com/homebrew/):\n\n    brew install node\n\nNext, from the root directory of this repository, install dependencies:\n\n    npm install\n\nTo run the tests, use:\n\n    npm test\n",
+  "readmeFilename": "README.md",
+  "_id": "d3-plugins@0.0.1",
+  "commit": "f9014263d0296fe12f4df929c525afe75d67f853"
+}

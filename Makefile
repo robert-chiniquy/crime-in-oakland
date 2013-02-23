@@ -19,5 +19,3 @@ oakland_council_districts:
 
 process_opd_data: opd_data
 	./bin/load_opd.js
-
-
