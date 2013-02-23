@@ -16,14 +16,7 @@ function cleanAddress(addr) {
 function csvToCrime(items) {
   if (!items) return;
   // incident, reported, rd, description, beat, address
-  return new Crime(
-    items[0]
-    , items[1]
-    , items[2]
-    , items[3]
-    , items[4]
-    , cleanAddress(items[5])
-  );
+  return new Crime(items[0], items[1], items[2], items[3], items[4], cleanAddress(items[5]));
 }
 
 
@@ -36,30 +29,32 @@ var argv = optimist
 // open the file, read a line at a time, turn it into a json object, geocode it, store it, index it
 var CSV_NAME = 'data/OPD_PublicCrimeData_2007-12.csv';
 var fileStream = fs.createReadStream(CSV_NAME, {flags: 'r'});
-var crime_count = 0
+var crime_count = 0;
 process.stderr.write('Processing '+ CSV_NAME +'…');
 csv()
   .from.stream(fileStream)
   .transform(function(data){
-    var crime = csvToCrime(data)
+    var crime = csvToCrime(data);
     if (crime) {
-      async.waterfall([
-        function geocode(cb) {
+      async.series([
+        function geocode(callback) {
           if (argv.geocode) {
-            crime.geocode(cb);
-          } else cb();
+            crime.geocode(callback);
+          } else callback();
         },
-        function store(cb) {
+        function store(callback) {
           crime_count++;
+          crime.setId(crime_count); // the only unique value we currently have
           if (argv.json) {
-            cb();
-          } else crime.store(cb);
-        }
-        , function index(cb) {
+            process.stdout.write(crime.toJson() + '\n');
+            callback();
+          } else crime.store(callback);
+        }, 
+        function index(callback) {
           if (argv.geocode) {
-            crime.addBeatIndex(cb);
-            // todo: index by other shapefiles
-          } else cb();
+            // todo: index by other shapefiles, async forEachLimit or something
+          }
+          crime.addBeatIndex(callback);
         }
       ], function(err) {
         if (err) process.stderr.write('Error loading crime: '+ JSON.stringify(crime) +', Error: '+ JSON.stringify(err));
