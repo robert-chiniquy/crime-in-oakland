@@ -2,6 +2,7 @@
 
 var fs = require('fs');
 var async = require('async');
+var optimist = require('optimist');
 var carrier = require('carrier');
 var Crime = require('../lib/crime').Crime;
 
@@ -32,31 +33,48 @@ function csvToCrime(line) {
 }
 
 
+var argv = optimist
+            .usage('\n./$0 {options}')
+            .options('json', {'desc': 'newline-delimited json to stdout instead of storing', 'default': false})
+            .options('geocode', {'desc': 'try to geocode each crime', 'default': false})
+            .argv;
+
 // open the file, read a line at a time, turn it into a json object, geocode it, store it, index it
 var CSV_NAME = 'data/OPD_PublicCrimeData_2007-12.csv';
 var fileStream = fs.createReadStream(CSV_NAME, {flags: 'r'});
-var processor = async.queue(function(crime, callback) {
-  async.waterfall([
-//    function store(callback) {
-//      crime.store(callback);
-//    },
-    function geocode(callback) {
-      crime.geocode(callback);
-    },
-    function store(callback) {
-      crime.store(callback);
-    },
-    function index(callback) {
-      setTimeout(callback, 600);
-      //callback();
-    }], callback);
-}, 1);
 
-console.log('Processing '+ CSV_NAME);
+process.stderr.write('Processing '+ CSV_NAME +'…');
 carrier.carry(fileStream, function(line) {
   var crime = csvToCrime(line);
   if (crime) {
-    processor.push(crime);
+    async.waterfall([
+      function geocode(callback) {
+        if (argv.geocode) {
+          crime.geocode(callback);
+        } else {
+          callback();
+        }
+      },
+      function store(callback) {
+        if (argv.json) {
+          process.stdout.write(crime.toJson());
+          callback();
+        } else {
+          crime.store(callback);
+        }
+      },
+      function index(callback) {
+        if (argv.geocode) {
+          crime.addBeatIndex(callback);
+          // todo: index by other shapefiles
+        } else {
+          callback();
+        }
+      }
+    ], function(err) {
+      if (err) {
+        process.stderr.write('Error loading crime: '+ JSON.stringify(crime) +', Error: '+ JSON.stringify(err));
+      }
+    });
   }
 });
-

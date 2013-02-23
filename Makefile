@@ -1,6 +1,6 @@
 
 all: process_opd_data
-	echo "done"
+	@echo "done"
 
 opd_data:
 	@[ -e data/OPD_PublicCrimeData_2007-12.csv ] ||\
