@@ -7,6 +7,7 @@ dependencies
 ============
 
 * http://mxcl.github.com/homebrew/
+* `brew install wget`
 * `brew install coreutils`
 * `sudo npm install -g yeoman` 
 * `sudo gem install compass`
