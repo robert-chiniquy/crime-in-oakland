@@ -7,8 +7,6 @@ dependencies
 ============
 
 * http://mxcl.github.com/homebrew/
-* `brew install wget`
-* `brew install coreutils`
-* `sudo npm install -g yeoman` 
-* `sudo gem install compass`
+* `brew install wget coreutils redis`
+* http://yeoman.io/installation.html 
 * `yeoman server`
