@@ -32,6 +32,7 @@ var fileStream = fs.createReadStream(CSV_NAME, {flags: 'r'});
 var crime_count = 0;
 process.stderr.write('Processing '+ CSV_NAME +'…');
 csv()
+  .on('end', process.exit)
   .from.stream(fileStream)
   .transform(function(data){
     var crime = csvToCrime(data);
@@ -54,7 +55,10 @@ csv()
           if (argv.geocode) {
             // todo: index by other shapefiles, async forEachLimit or something
           }
-          crime.addBeatIndex(callback);
+          async.parallel([
+            crime.addBeatIndex.bind(crime),
+            crime.addDateIndex.bind(crime)
+          ], callback);
         }
       ], function(err) {
         if (err) process.stderr.write('Error loading crime: '+ JSON.stringify(crime) +', Error: '+ JSON.stringify(err));
