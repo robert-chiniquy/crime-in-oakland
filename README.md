@@ -9,10 +9,3 @@ Heatmap per day over several years by @jakl
 
 [D3 Code on gh-pages](https://github.com/robert-chiniquy/crime-in-oakland/tree/gh-pages)
 
-dependencies
-============
-
-* http://mxcl.github.com/homebrew/
-* `brew install wget coreutils redis`
-* http://yeoman.io/installation.html
-* `yeoman server`
